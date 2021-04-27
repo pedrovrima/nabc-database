@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Bander {
+  id                       Int          @id @default(autoincrement())
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+  first_name               String
+  last_name                String
+  email                    String       @unique
+  address                  String
+  nationality              String
+  gender                   String
+  race                     String
+  privacy_level            String
+  remarks                  String
+  session_chaired          Session[]
+  evaluations_participated Evaluation[]
+  sessions_evaluated       Evaluator[]
+}
+
+model Session {
+  id           Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  city         String
+  state        String
+  country      String
+  organization String
+  date         DateTime
+  chair        Bander       @relation(fields: [chairId], references: [id])
+  chairId      Int
+  evaluations  Evaluation[]
+}
+
+model Evaluator {
+
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  bander       Bander     @relation(fields: [banderId], references: [id])
+  banderId     Int
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+  evaluationId Int
+}
+
+model Evaluation {
+  id               Int               @id @default(autoincrement())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  bander           Bander            @relation(fields: [banderId], references: [id])
+  banderId         Int
+  level            String
+  session          Session           @relation(fields: [sessionId], references: [id])
+  sessionId        Int
+  evaluators       Evaluator[]
+  final_result     String
+  taxa             String
+  trapping_methods EvaluationTraps[]
+}
+
+model EvaluationTraps {
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  evaluation   Evaluation @relation(fields: [evaluationId], references: [id])
+  evaluationId Int
+  trap         Traps      @relation(fields: [trapId], references: [id])
+  trapId       Int
+}
+
+model Traps {
+  id          Int               @id @default(autoincrement())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  type        String
+  evaluations EvaluationTraps[]
+}
