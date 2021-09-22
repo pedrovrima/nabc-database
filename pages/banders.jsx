@@ -97,7 +97,7 @@ function SelectColumnFilter({
     <div>
       {/* <option value="all">All</option> */}
       {options.map((option, i) =>
-        <Checkbox isChecked={selected.indexOf(option)>-1} onChange={(e)=>changeFunc(e)} key={i} value={option}>
+        <Checkbox size="sm" isChecked={selected.indexOf(option)>-1} onChange={(e)=>changeFunc(e)} key={i} value={option}>
           {option}
         </Checkbox>
       )}
