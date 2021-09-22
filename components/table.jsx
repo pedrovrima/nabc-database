@@ -1,11 +1,11 @@
+import React, {useMemo} from "react"
 import {
   useTable,
   useGlobalFilter,
-  useAsyncDebounce,
   useFilters,
 } from "react-table";
 
-import { GlobalFilter } from "./filters";
+import {DefaultColumnFilter,GlobalFilter} from "./filters";
 
 
 import {
@@ -20,17 +20,16 @@ import {
     Checkbox,
     Box,
     Input
-} from "./parts"
+} from "@chakra-ui/react"
 
-export default function Taable({ columns, data }) {
-  const filterTypes = React.useMemo(
+const Taable=({ columns, data }) =>{
+  const filterTypes = useMemo(
     () => ({
       //   // Add a new fuzzyTextFilterFn filter type.
       //   fuzzyText: fuzzyTextFilterFn,
       //   // Or, override the default text filter to use
       //   // "startWith"
       hasAny: (rows, id, filterValue) => {
-        console.log(filterValue);
         return rows.filter((row) => {
           const rowValue = row.values[id];
           return rowValue !== undefined
@@ -52,7 +51,7 @@ export default function Taable({ columns, data }) {
     }),
     []
   );
-  const defaultColumn = React.useMemo(
+  const defaultColumn = useMemo(
     () => ({
       // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
@@ -125,3 +124,6 @@ export default function Taable({ columns, data }) {
     </Box>
   );
 }
+
+
+export default Taable

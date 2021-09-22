@@ -88,3 +88,16 @@ export function Checkbox (props){
 
 
 
+
+
+export function Box (props){
+    const {children} = props
+    return(
+        <div>
+            {children}
+        </div>
+    )
+}
+
+
+

@@ -14,7 +14,7 @@ const banderColumns =  [
       accessor: "nationality",
       filter: "hasAny",
       Filter: SelectColumnFilter
-    },
+    },  
     {
       Header: "Passerines",
       accessor: "max_passerine",
