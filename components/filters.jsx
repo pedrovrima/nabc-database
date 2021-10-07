@@ -15,8 +15,10 @@ export function GlobalFilter({
 
   return (
     <span>
-      Search:{" "}
       <Input
+      size="sm"
+      variant="outline"
+      width={200}
         value={value || ""}
         onChange={e => {
           setValue(e.target.value);
@@ -25,8 +27,8 @@ export function GlobalFilter({
         placeholder={`${count} records...`}
         style={{
           fontSize: "1.1rem",
-          border: "0"
         }}
+        
       />
     </span>
   );

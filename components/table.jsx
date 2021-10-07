@@ -1,28 +1,24 @@
-import React, {useMemo} from "react"
-import {
-  useTable,
-  useGlobalFilter,
-  useFilters,
-} from "react-table";
+import React, { useMemo } from "react";
+import { useTable, useGlobalFilter, useFilters } from "react-table";
 
-import {DefaultColumnFilter,GlobalFilter} from "./filters";
-
+import { DefaultColumnFilter, GlobalFilter } from "./filters";
 
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    Checkbox,
-    Box,
-    Input
-} from "@chakra-ui/react"
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  Checkbox,
+  Box,
+  Input,
+  Heading
+} from "@chakra-ui/react";
 
-const Taable=({ columns, data }) =>{
+const Taable = ({ columns, data }) => {
   const filterTypes = useMemo(
     () => ({
       //   // Add a new fuzzyTextFilterFn filter type.
@@ -30,7 +26,7 @@ const Taable=({ columns, data }) =>{
       //   // Or, override the default text filter to use
       //   // "startWith"
       hasAny: (rows, id, filterValue) => {
-        return rows.filter((row) => {
+        return rows.filter(row => {
           const rowValue = row.values[id];
           return rowValue !== undefined
             ? filterValue.indexOf(rowValue) > -1
@@ -39,7 +35,7 @@ const Taable=({ columns, data }) =>{
       },
 
       text: (rows, id, filterValue) => {
-        return rows.filter((row) => {
+        return rows.filter(row => {
           const rowValue = row.values[id];
           return rowValue !== undefined
             ? String(rowValue)
@@ -47,14 +43,14 @@ const Taable=({ columns, data }) =>{
                 .startsWith(String(filterValue).toLowerCase())
             : true;
         });
-      },
+      }
     }),
     []
   );
   const defaultColumn = useMemo(
     () => ({
       // Let's set up our default Filter UI
-      Filter: DefaultColumnFilter,
+      Filter: DefaultColumnFilter
     }),
     []
   );
@@ -70,37 +66,68 @@ const Taable=({ columns, data }) =>{
     visibleColumns,
     preGlobalFilteredRows,
     setGlobalFilter,
+    allColumns
   } = useTable(
     {
       columns,
       data: new_data,
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
+      initialState: {
+        hiddenColumns: columns.map(column => {
+          if (column.show === false) return column.accessor || column.id;
+        })
+      }
     },
     useFilters, // useFilters!
     useGlobalFilter // useGlobalFilter!
   );
 
   return (
-    <Box>
+    <Box p={24}>
+      <Heading size="md"> Columns</Heading>
+      {allColumns.map(column =>
+        <div key={column.id}>
+          <label>
+            <input type="checkbox" {...column.getToggleHiddenProps()} />{" "}
+            {column.render("Header")}
+          </label>
+        </div>
+      )}
+
+      <Heading size="md">Filters</Heading>
+        <Heading size="sm"> Global </Heading>
       <GlobalFilter
         preGlobalFilteredRows={preGlobalFilteredRows}
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
+      {allColumns.map(column => {
+        return (
+          <div key={column.id}>
+            {!column.disableFilters
+              ? <div>
+                  <Heading size="sm">
+                    {column.render("Header")}
+                  </Heading>
+                  {column.render("Filter")}
+                </div>
+              : null}
+          </div>
+        );
+      })}
       <Table className="" {...getTableProps()}>
         <Thead>
-          {headerGroups.map((headerGroup, i) => (
+          {headerGroups.map((headerGroup, i) =>
             <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
+              {headerGroup.headers.map(column =>
                 <Th key={i} {...column.getHeaderProps()}>
                   {column.render("Header")}
-                  <div>{column.canFilter ? column.render("Filter") : null}</div>
                 </Th>
-              ))}
+              )}
               <Th>View</Th>
             </Tr>
-          ))}
+          )}
         </Thead>
         <Tbody {...getTableBodyProps()}>
           {rows.map((row, i) => {
@@ -108,7 +135,7 @@ const Taable=({ columns, data }) =>{
             console.log(row);
             return (
               <Tr key={i} {...row.getRowProps()}>
-                {row.cells.map((cell) => {
+                {row.cells.map(cell => {
                   return (
                     <Td key={i} {...cell.getCellProps()}>
                       {cell.render("Cell")}
@@ -123,7 +150,6 @@ const Taable=({ columns, data }) =>{
       </Table>
     </Box>
   );
-}
+};
 
-
-export default Taable
+export default Taable;

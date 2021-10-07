@@ -2,7 +2,7 @@ import React, { useEffect, useMemo,useState } from "react";
 import useSWR from "swr";
 import Taable from "../components/table"
 import { SelectColumnFilter } from "../components/filters";
-import { Container, Heading } from "@chakra-ui/layout";
+import { Container, Heading, Box } from "@chakra-ui/layout";
 const fetcher = url => fetch(url).then(r => r.json());
 
 
@@ -49,17 +49,18 @@ const banderColumns =  [
       Header: "Race",
       accessor: "race",
       filter: "hasAny",
-      Filter: SelectColumnFilter
+      Filter: SelectColumnFilter,
+      show:false
     },
     {
       Header: "Gender",
       accessor: "gender",
       filter: "hasAny",
-      Filter: SelectColumnFilter
+      Filter: SelectColumnFilter, show:false
     },
-    { Header: "Remarks", accessor: "remarks", disableFilters: true },
-    { Header: "Email", accessor: "email", disableFilters: true },
-    { Header: "Address", accessor: "address", disableFilters: true }
+    { Header: "Remarks", accessor: "remarks", disableFilters: true, show:false },
+    { Header: "Email", accessor: "email", disableFilters: true, show:false },
+    { Header: "Address", accessor: "address", disableFilters: true, show:false }
   ]
 
 
@@ -79,10 +80,10 @@ export default function Banders(props) {
   );
 
   return (
-    <Container width={"container.xl"}>
+    <Box >
       <Heading>Banders</Heading>
 
       {data ? <Taable columns={columns} data={data} /> : "loading"}
-    </Container>
+    </Box>
   );
 }
