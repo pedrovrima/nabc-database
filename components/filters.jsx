@@ -48,8 +48,9 @@ export function SelectColumnFilter({
     [id, preFilteredRows]
   );
 
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(filterValue||[]);
 
+  console.log(selected,filterValue)
   const changeFunc = e => {
     selected.indexOf(e.target.value) > -1
       ? setSelected(selected.filter(sel => sel !== e.target.value))
@@ -72,7 +73,7 @@ export function SelectColumnFilter({
       {/* <option value="all">All</option> */}
       {options.map((option, i) =>
         <Checkbox
-          ischecked={selected.indexOf(option) > -1}
+          isChecked={selected.indexOf(option) > -1}
           onChange={e => changeFunc(e)}
           key={i}
           value={option}

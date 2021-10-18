@@ -4,6 +4,11 @@ import { useTable, useGlobalFilter, useFilters } from "react-table";
 import { DefaultColumnFilter, GlobalFilter } from "./filters";
 
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Table,
   Thead,
   Tbody,
@@ -15,12 +20,13 @@ import {
   Checkbox,
   Box,
   Input,
-  Heading
+  Heading,
+  Flex
 } from "@chakra-ui/react";
 
-import { ViewIcon } from '@chakra-ui/icons'
+import { ViewIcon } from "@chakra-ui/icons";
 
-const Taable = ({ columns, data }) => {
+const Taable = ({ columns, data, clickFunction }) => {
   const filterTypes = useMemo(
     () => ({
       //   // Add a new fuzzyTextFilterFn filter type.
@@ -86,38 +92,65 @@ const Taable = ({ columns, data }) => {
   );
 
   return (
-    <Box p={24}>
-      <Heading size="md"> Columns</Heading>
-      {allColumns.map(column =>
-        <div key={column.id}>
-          <label>
-            <input type="checkbox" {...column.getToggleHiddenProps()} />{" "}
-            {column.render("Header")}
-          </label>
-        </div>
-      )}
-
-      <Heading size="md">Filters</Heading>
-        <Heading size="sm"> Global </Heading>
-      <GlobalFilter
-        preGlobalFilteredRows={preGlobalFilteredRows}
-        globalFilter={state.globalFilter}
-        setGlobalFilter={setGlobalFilter}
-      />
-      {allColumns.map(column => {
-        return (
-          <div key={column.id}>
-            {!column.disableFilters
-              ? <div>
-                  <Heading size="sm">
+    <Box>
+      <Accordion mt="4" mb="8" defaultIndex={[0]} allowToggle allowMultiple>
+        <AccordionItem>
+          <AccordionButton>
+            <Heading size="sm"> Columns</Heading>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <Flex wrap="wrap">
+              {allColumns.map(column =>
+                <Box p="2" key={column.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      {...column.getToggleHiddenProps()}
+                    />{" "}
                     {column.render("Header")}
-                  </Heading>
-                  {column.render("Filter")}
-                </div>
-              : null}
-          </div>
-        );
-      })}
+                  </label>
+                </Box>
+              )}
+            </Flex>
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <AccordionButton>
+            <Heading size="sm">Filters</Heading>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <Heading size="sm"> Global </Heading>
+            <GlobalFilter
+              preGlobalFilteredRows={preGlobalFilteredRows}
+              globalFilter={state.globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+            {allColumns.map(column => {
+              return (
+                <Box mb="4" key={column.id}>
+                  {!column.disableFilters
+                    ? <div>
+                        <Heading size="sm">
+                          {column.render("Header")}
+                        </Heading>
+                        {column.render("Filter")}
+                      </div>
+                    : null}
+                </Box>
+              );
+            })}
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+
+      <Box />
+
+<Box>
+  <p>Total Rercords: {preGlobalFilteredRows.length}</p>
+</Box>
+      
       <Table className="" {...getTableProps()}>
         <Thead>
           {headerGroups.map((headerGroup, i) =>
@@ -138,14 +171,18 @@ const Taable = ({ columns, data }) => {
             return (
               <Tr key={i} {...row.getRowProps()}>
                 {row.cells.map(cell => {
-                  
                   return (
                     <Td key={i} {...cell.getCellProps()}>
                       {cell.render("Cell")}
                     </Td>
                   );
                 })}
-                <Td><ViewIcon onClick={()=>clickFunction()} style={{cursor:"pointer"}}></ViewIcon></Td>
+                <Td>
+                  <ViewIcon
+                    onClick={() => clickFunction(row.values.id)}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Td>
               </Tr>
             );
           })}
