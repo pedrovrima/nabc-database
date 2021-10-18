@@ -35,4 +35,4 @@ ALTER TABLE `Evaluation` ADD CONSTRAINT `Evaluation_sessionId_fkey` FOREIGN KEY 
 ALTER TABLE `EvaluationTraps` ADD CONSTRAINT `EvaluationTraps_evaluationId_fkey` FOREIGN KEY (`evaluationId`) REFERENCES `Evaluation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- RenameIndex
-ALTER TABLE `Bander` RENAME INDEX `Bander.email_unique` TO `Bander_email_key`;
+-- ALTER TABLE `Bander` RENAME INDEX `Bander.email_unique` TO `Bander_email_key`;
