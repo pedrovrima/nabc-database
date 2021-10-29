@@ -8,7 +8,7 @@ export default async function getSessions(req, res) {
     where: { id },
     include: {
       chair: true,
-      evaluations: {include:{bander:true,evaluators:true}},
+      evaluations: {include:{bander:true,evaluators:{include:{bander:true}}}},
      }
   });
 

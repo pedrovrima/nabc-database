@@ -2,7 +2,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import Taable from "../components/table";
 import { SelectColumnFilter } from "../components/filters";
-import { Container, Heading, Box, Flex } from "@chakra-ui/layout";
+import {
+  Container,
+  Heading,
+  Box,
+  Flex,
+  List,
+  ListItem
+} from "@chakra-ui/layout";
 import {
   Modal,
   ModalOverlay,
@@ -13,9 +20,23 @@ import {
   ModalCloseButton,
   Lorem,
   Button,
-  useDisclosure
+  useDisclosure,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  Table,
+  Tr,
+  Td
 } from "@chakra-ui/react";
 const fetcher = url => fetch(url).then(r => r.json());
+
+const createDate = pre_date => {
+  const date = new Date(pre_date);
+  console.log(date);
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+};
 
 const poster = async (url, param) => {
   console.log(param);
@@ -113,7 +134,7 @@ export default function Banders(props) {
 function BModal({ isOpen, onClose, id }) {
   const idData = { id: id };
   const { error, data } = useSWR(["/api/bander_id", id], poster);
-  console.log(id);
+  console.log(data);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -137,7 +158,7 @@ function BModal({ isOpen, onClose, id }) {
 
                 <Box mt="8" mb="8">
                   <Heading size="md"> Maximum level </Heading>
-                  <Flex wrap="wrap" align="start" >
+                  <Flex wrap="wrap" align="start">
                     <Box p="1">
                       {" "}<Heading size="xs">Passerine </Heading>{" "}
                       <p>{data.max_passerine || "None"}</p>
@@ -160,20 +181,91 @@ function BModal({ isOpen, onClose, id }) {
                     </Box>
                   </Flex>
                 </Box>
+                <Accordion allowMultiple allowToggle>
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Heading size="sm">
+                          Sessions being Evaluated:{" "}
+                          {data.evaluations_participated.length}
+                        </Heading>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel>
+                      {data.evaluations_participated.map((evaluation, i) => {
+                        return (
+                          <Box p="3" bg={i%2==0?"lightgray":""} key={i}>
+                            <List>
+                              <ListItem><strong>Taxa:</strong> {evaluation.taxa}</ListItem>
+                              <ListItem><strong>Level:</strong> {evaluation.level}</ListItem>
+                              <ListItem><strong>Written Exam Score:</strong> {evaluation.written_score}</ListItem>
 
-                <Heading size="sm">
-                  Sessions being Evaluated:{" "}
-                  {data.evaluations_participated.length}
-                </Heading>
+                              <ListItem><strong>Result:</strong> {evaluation.final_result}</ListItem>
 
-                <Heading size="sm">
-                  Sessions Evaluated: {data.sessions_evaluated.length}
-                </Heading>
+                              <ListItem><strong>Notes:</strong> {evaluation.comments || "None"}</ListItem>
 
-                <Heading size="sm">
-                  Sessions Chaired: {data.session_chaired.length}
-                </Heading>
+                            </List>
+                          </Box>
+                        );
+                      })}
+                    </AccordionPanel>
+                  </AccordionItem>
 
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Heading size="sm">
+                          Sessions Evaluated: {data.sessions_evaluated.length}
+                        </Heading>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel>
+                      <Table>
+                        {data.sessions_evaluated.map((evalu, i) =>
+                          <Tr mb="2" p="1" key={i}>
+                            <Td p="1">
+                              {evalu.evaluation.bander.first_name +
+                                " " +
+                                evalu.evaluation.bander.last_name}
+                            </Td>
+                            <Td p="1">
+                              {evalu.evaluation.level}
+                            </Td>
+                            <Td p="1">
+                              {evalu.evaluation.final_result}
+                            </Td>
+                          </Tr>
+                        )}
+                      </Table>
+                    </AccordionPanel>
+                  </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Heading size="sm">
+                          Sessions Chaired: {data.session_chaired.length}
+                        </Heading>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel>
+                      <Table>
+                        {data.session_chaired.map((sess, i) =>
+                          <Tr mb="2" p="1" key={i}>
+                            <Td p="1">
+                              {sess.organization}
+                            </Td>
+                            <Td p="1">
+                              {createDate(sess.date)}
+                            </Td>
+                          </Tr>
+                        )}
+                      </Table>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
                 {/* <Lorem count={2} /> */}
               </ModalBody>
             </div>

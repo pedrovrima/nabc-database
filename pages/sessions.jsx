@@ -2,7 +2,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import Taable from "../components/table";
 import { SelectColumnFilter } from "../components/filters";
-import { Container, Heading, Box, Flex, Text, Grid } from "@chakra-ui/layout";
+import {
+  Container,
+  Heading,
+  Box,
+  Flex,
+  Text,
+  Grid,
+  List,
+  ListItem
+} from "@chakra-ui/layout";
 import {
   Modal,
   ModalOverlay,
@@ -32,7 +41,7 @@ const poster = async (url, param) => {
 const createDate = pre_date => {
   const date = new Date(pre_date);
   console.log(date);
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getYear()}`;
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
 
 const banderColumns = [
@@ -58,7 +67,7 @@ const banderColumns = [
   },
   {
     Header: "Finalized",
-    accessor: "finalized",
+    accessor: row => (row.finalized ? "Yes" : "No"),
     disableFilters: true
   }
 ];
@@ -88,9 +97,27 @@ export default function Sessions(props) {
 }
 
 function BModal({ isOpen, onClose, id }) {
+  const [trainers, setTrainers] = useState([]);
   const idData = { id: id };
   const { error, data } = useSWR(["/api/session_id", id], poster);
-  console.log(id);
+
+  useEffect(
+    () => {
+      if (data) {
+        const unique_trainers = data.evaluations.reduce((cont, evalu) => {
+          const evaluators = evalu.evaluators.map(
+            evaluator =>
+              evaluator.bander.first_name + " " + evaluator.bander.last_name
+          );
+
+          return [...new Set([...cont, ...evaluators])];
+        }, []);
+        setTrainers(unique_trainers);
+        console.log(unique_trainers)
+      }
+    },
+    [data]
+  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -103,29 +130,40 @@ function BModal({ isOpen, onClose, id }) {
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <Box mb="2">
+                <Box mb="4">
                   <Heading size="sm">Chair</Heading>
                   <p>
                     {data.chair.first_name + " " + data.chair.last_name}
                   </p>
                 </Box>
 
+                <Box mb="4">
+                  <Heading mb="1" size="sm">Trainers</Heading>
+                  <List>
+                    {trainers.map((trainer, i) =>
+                      <ListItem key={i}>
+                        {trainer}
+                      </ListItem>
+                    )}
+                  </List>
+                </Box>
+
                 <Box mb="2">
-                  <Heading size="sm">Results</Heading>
+                  <Heading mb="1" size="sm">Results</Heading>
 
                   <Table>
                     {data.evaluations.map((evalu, i) =>
-                      <Tr key={i}>
-                        <Td >
+                      <Tr mb="2"  p="1" key={i}>
+                        <Td p="1">
                           {evalu.bander.first_name +
                             " " +
                             evalu.bander.last_name}
                         </Td>
-                        <Td >
-                          {evalu.level }
+                        <Td p="1">
+                          {evalu.level}
                         </Td>
-                        <Td >
-                          {evalu.final_result }
+                        <Td p="1">
+                          {evalu.final_result}
                         </Td>
                       </Tr>
                     )}
