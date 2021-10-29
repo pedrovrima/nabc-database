@@ -231,6 +231,10 @@ function BModal({ isOpen, onClose, id }) {
                                 evalu.evaluation.bander.last_name}
                             </Td>
                             <Td p="1">
+                              {evalu.evaluation.taxa}
+                            </Td>
+
+                            <Td p="1">
                               {evalu.evaluation.level}
                             </Td>
                             <Td p="1">
