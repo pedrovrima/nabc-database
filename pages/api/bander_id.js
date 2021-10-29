@@ -9,7 +9,7 @@ export default async function getBanders(req, res) {
     include: {
       session_chaired: true,
       evaluations_participated: true,
-      sessions_evaluated: true
+      sessions_evaluated: {include:{evaluation:{include:{bander:true}}}}
     }
   });
   console.log(bander)
