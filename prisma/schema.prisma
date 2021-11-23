@@ -20,8 +20,8 @@ model Bander {
   nationality              String
   gender                   String
   race                     String
-  privacy_level            String
-  remarks                  String
+  privacy_level            String?
+  remarks                  String?
   session_chaired          Session[]
   evaluations_participated Evaluation[]
   sessions_evaluated       Evaluator[]
