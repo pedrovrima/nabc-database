@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -42,8 +42,8 @@ model Session {
   chair        Bander       @relation(fields: [chairId], references: [id])
   chairId      Int
   evaluations  Evaluation[]
-  finalized     Boolean     @default(true)
-  
+  finalized    Boolean      @default(true)
+
 }
 
 model Evaluator {
@@ -60,14 +60,14 @@ model Evaluation {
   bander        Bander      @relation(fields: [banderId], references: [id])
   banderId      Int
   level         Levels
+  taxa          Taxa
   session       Session     @relation(fields: [sessionId], references: [id])
   sessionId     Int
   evaluators    Evaluator[]
-  final_result  Result
-  taxa          Taxa
-  written_score Float
-  comments      String
-  paid          Boolean
+  final_result  Result?
+  written_score Float?
+  comments      String?
+  paid          Boolean?
 
   trapping_methods EvaluationTraps[]
 }
