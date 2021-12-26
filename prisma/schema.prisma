@@ -68,7 +68,6 @@ model Evaluation {
   written_score Float?
   comments      String?
   paid          Boolean?
-
   trapping_methods EvaluationTraps[]
 }
 
