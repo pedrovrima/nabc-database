@@ -1,3 +1,4 @@
+import EvaluationForm from "../components/new_evaluation";
 import { Box, Flex, Heading } from "@chakra-ui/layout";
 import {
   FormControl,
@@ -15,6 +16,7 @@ const fetcher = (url) => fetch(url).then((r) => r.json());
 
 export default function CreateSession(props) {
   const {
+    control,
     register,
     watch,
     handleSubmit,
@@ -24,13 +26,13 @@ export default function CreateSession(props) {
   const { data } = useSWR("/api/get_trainers", fetcher);
   function onSubmit(values) {
     console.log(values);
-    return new Promise(async (resolve) => {
-      await fetch("/api/create_bander", {
-        method: "post",
-        body: JSON.stringify({ data: values })
-      });
-      resolve();
-    });
+    //return new Promise(async (resolve) => {
+    //  await fetch("/api/create_bander", {
+    //    method: "post",
+    //    body: JSON.stringify({ data: values })
+    //  });
+      //resolve();
+ //   });
   }
 
   return (
@@ -38,7 +40,7 @@ export default function CreateSession(props) {
       {data ? (
         <Box mx={64}>
           <Container>
-            <Heading mb={16}>Add new bander</Heading>
+            <Heading mb={16}>New Session</Heading>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <Flex>
@@ -113,7 +115,7 @@ export default function CreateSession(props) {
                 </FormErrorMessage>
               </FormControl>
               <FormControl mb={6} isRequired isInvalid={errors.chairId}>
-                <FormLabel mb={0}>Session Chair</FormLabel>
+  <FormLabel mb={0}>Session Chair</FormLabel>
                 <Select
                   placeholder={"Select one"}
                   {...register("chairId", { required: "Required" })}
@@ -128,6 +130,7 @@ export default function CreateSession(props) {
                   {errors.chairId && errors.chairId.message}
                 </FormErrorMessage>
               </FormControl>
+              <EvaluationForm control={control} register={register} trainers={data} banders={data}></EvaluationForm>
               <Button
                 mt={4}
                 colorScheme="teal"
@@ -135,6 +138,9 @@ export default function CreateSession(props) {
                 isLoading={isSubmitting}
                 type="submit"
               >
+
+
+                
                 Submit
               </Button>{" "}
             </form>
