@@ -8,39 +8,206 @@ import {
   Select,
   Input,
   Button,
-  Container
+  Container,
 } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import useSWR from "swr";
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
 export default function CreateSession(props) {
+  const { modal, pre_data } = props;
+  const def_data = { ...pre_data };
+  console.log(def_data);
+  delete def_data.chair;
+
+  console.log(pre_data);
   const {
     control,
     register,
     watch,
     handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm();
+    formState: { errors, isSubmitting },
+  } = useForm({ defaultValues: def_data });
 
   const { data } = useSWR("/api/get_trainers", fetcher);
   function onSubmit(values) {
-    console.log(values);
-    //return new Promise(async (resolve) => {
-    //  await fetch("/api/create_bander", {
-    //    method: "post",
-    //    body: JSON.stringify({ data: values })
-    //  });
-      //resolve();
- //   });
+    return new Promise(async (resolve) => {
+      if (pre_data) {
+        const session = Object.keys(values).reduce((ct, vals) => {
+          if (
+            values[vals] !== def_data[vals] &&
+            !["evaluations"].includes(vals)
+          ) {
+            return { ...ct, [vals]: values[vals] };
+          } else {
+            return { ...ct };
+          }
+        }, {});
+
+        const evals = values.evaluations.create.reduce(
+          (ct, evalu) => {
+            console.log(ct);
+            if (evalu.old_id) {
+              const pre_data = def_data.evaluations.create.filter(
+                (ev) => ev.old_id === evalu.old_id
+              );
+              const diff = Object.keys(evalu).reduce((diff_ct, eval_key) => {
+                console.log(pre_data);
+
+                if (eval_key === "bander") {
+                  if (
+                    evalu.bander.connect.id !==
+                    pre_data[0].bander.connect.id
+                  ) {
+                    return { ...diff_ct, [eval_key]: evalu[eval_key] };
+                  }
+                } else {
+                  return { ...diff_ct };
+                }
+
+                if (
+                  evalu[eval_key] !== pre_data[0][eval_key] &&
+                  !["evaluators", "trapping_methods","bander"].includes(eval_key)
+                ) {
+                  return { ...diff_ct, [eval_key]: evalu[eval_key] };
+                } else {
+                  return { ...diff_ct };
+                }
+              }, {});
+              if (Object.keys(diff).length) {
+                console.log(diff);
+                return {
+                  ...ct,
+                  update: [
+                    ...ct.update,
+                    { data: diff, where: { id: evalu.old_id } },
+                  ],
+                };
+              } else {
+                return ct;
+              }
+            } else {
+              const new_evaluation = {
+                session: { connect: { id: def_data.id } },
+                ...evalu,
+              };
+              return { ...ct, create: [...ct.create, new_evaluation] };
+            }
+          },
+          { create: [], update: [] }
+        );
+
+        const trap = values.evaluations.create.reduce(
+          (ct, evalu) => {
+            if (evalu.old_id) {
+              const original_evaluation = def_data.evaluations.create.filter(
+                (ev) => ev.old_id === evalu.old_id
+              );
+              const new_traps = evalu.trapping_methods?.create.map(
+                (evals) => evals.trap
+              );
+              const old_traps = original_evaluation[0].trapping_methods?.create.map(
+                (evals) => evals.trap
+              );
+              const toAdd = new_traps?.filter((ev) => !old_traps.includes(ev));
+              console.log(toAdd);
+              const toDelete = original_evaluation[0].trapping_methods?.create?.filter(
+                (ev) => !new_traps.includes(ev.trap)
+              );
+
+              const add = toAdd?.map((tadd) => {
+                return { trap: tadd, evaluationId: evalu.old_id };
+              });
+
+              const del = toDelete?.map((tdel) => {
+                return { id: tdel.id };
+              });
+
+              return {
+                delete: [...ct.delete, ...del],
+                create: [...ct.create, ...add],
+              };
+            } else {
+              return ct;
+            }
+          },
+          { delete: [], create: [] }
+        );
+
+        // Change delete to ID on evaluator and traps
+
+        const evaluator = values.evaluations.create.reduce(
+          (ct, evalu) => {
+            if (evalu.old_id) {
+              const original_evaluation = def_data.evaluations.create.filter(
+                (ev) => ev.old_id === evalu.old_id
+              );
+              const new_evals = evalu.evaluators.create.map(
+                (evals) => evals.banderId
+              );
+              const old_evals = original_evaluation[0].evaluators.create.map(
+                (evals) => evals.banderId
+              );
+
+              const toAdd = new_evals.filter((ev) => !old_evals.includes(ev));
+
+              const toDelete = original_evaluation[0].evaluators.create.filter(
+                (ev) => !new_evals.includes(ev.banderId)
+              );
+
+              const add = toAdd.map((tadd) => {
+                return { banderId: tadd, evaluationId: evalu.old_id };
+              });
+
+              const del = toDelete.map((tdel) => {
+                return { id: tdel.id };
+              });
+
+              return {
+                delete: [...ct.delete, ...del],
+                create: [...ct.create, ...add],
+              };
+            } else {
+              return ct;
+            }
+          },
+          { delete: [], create: [] }
+        );
+
+        const new_ids = values.evaluations.create.map((evals) => evals.old_id);
+        const old_ids = def_data.evaluations.create.map(
+          (evals) => evals.old_id
+        );
+        const deleteEvals = old_ids.filter((id) => !new_ids.includes(id));
+
+        const evaluation = { ...evals, delete: deleteEvals };
+
+        const data = { evaluation, session, evaluator, trap };
+
+        await fetch("/api/create_session", {
+          method: "post",
+          body: JSON.stringify({ data, type: "update", id: def_data.id }),
+        });
+      } else {
+        console.log(values);
+        const status = await fetch("/api/create_session", {
+          method: "post",
+          body: JSON.stringify({ data: values, type: "create" }),
+        });
+      }
+      
+      resolve();
+    });
   }
 
   return (
     <>
       {data ? (
-        <Box mx={64}>
+        <Box mx={modal ? 12 : 64} mb={64}>
           <Container>
-            <Heading mb={16}>New Session</Heading>
+            <Heading size="lg" mt={16} mb={8}>
+              Create New Session
+            </Heading>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <Flex>
@@ -48,7 +215,7 @@ export default function CreateSession(props) {
                   <FormLabel mb={0}>City</FormLabel>
                   <Input
                     {...register("city", {
-                      required: "Required"
+                      required: "Required",
                     })}
                     placeholder="Arcata"
                   ></Input>
@@ -60,7 +227,7 @@ export default function CreateSession(props) {
                   <FormLabel mb={0}>State</FormLabel>
                   <Input
                     {...register("state", {
-                      required: "Required"
+                      required: "Required",
                     })}
                     placeholder="California"
                   ></Input>
@@ -94,7 +261,7 @@ export default function CreateSession(props) {
                 <FormLabel mb={0}>Organization</FormLabel>
                 <Input
                   {...register("organization", {
-                    required: "Required"
+                    required: "Required",
                   })}
                   placeholder="HBBO"
                 ></Input>
@@ -106,7 +273,8 @@ export default function CreateSession(props) {
                 <FormLabel mb={0}>Date</FormLabel>
                 <Input
                   {...register("date", {
-                    required: "Required"
+                    required: "Required",
+                    valueAsDate: true,
                   })}
                   type="date"
                 ></Input>
@@ -115,10 +283,13 @@ export default function CreateSession(props) {
                 </FormErrorMessage>
               </FormControl>
               <FormControl mb={6} isRequired isInvalid={errors.chairId}>
-  <FormLabel mb={0}>Session Chair</FormLabel>
+                <FormLabel mb={0}>Session Chair</FormLabel>
                 <Select
                   placeholder={"Select one"}
-                  {...register("chairId", { required: "Required" })}
+                  {...register("chairId", {
+                    required: "Required",
+                    valueAsNumber: true,
+                  })}
                 >
                   {data.map((dt, i) => (
                     <option key={i} value={dt.id}>
@@ -130,19 +301,24 @@ export default function CreateSession(props) {
                   {errors.chairId && errors.chairId.message}
                 </FormErrorMessage>
               </FormControl>
-              <EvaluationForm control={control} register={register} trainers={data} banders={data}></EvaluationForm>
-              <Button
-                mt={4}
-                colorScheme="teal"
-                loadingText="Sending"
-                isLoading={isSubmitting}
-                type="submit"
-              >
-
-
-                
-                Submit
-              </Button>{" "}
+              <EvaluationForm
+                control={control}
+                register={register}
+                trainers={data}
+                banders={data}
+              ></EvaluationForm>
+              <Flex>
+                <Button
+                  mt={4}
+                  colorScheme="teal"
+                  loadingText="Sending"
+                  isLoading={isSubmitting}
+                  type="submit"
+                  w="100%"
+                >
+                  Submit
+                </Button>{" "}
+              </Flex>
             </form>
           </Container>
         </Box>
@@ -402,5 +578,5 @@ const countryList = [
   "Yemen",
   "Zambia",
   "Zimbabwe",
-  "Åland Islands"
+  "Åland Islands",
 ];
