@@ -25,7 +25,7 @@ model Bander {
   session_chaired          Session[]
   evaluations_participated Evaluation[]
   sessions_evaluated       Evaluator[]
-  max_raptor               Levels?
+  max_raptors               Levels?
   max_passerines            Levels?
   max_hummingbirds           Levels?
   max_waterfowl            Levels?
