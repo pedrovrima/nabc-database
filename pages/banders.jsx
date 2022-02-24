@@ -8,7 +8,7 @@ import {
   Box,
   Flex,
   List,
-  ListItem
+  ListItem,
 } from "@chakra-ui/layout";
 import {
   Modal,
@@ -28,22 +28,22 @@ import {
   AccordionPanel,
   Table,
   Tr,
-  Td
+  Td,
 } from "@chakra-ui/react";
-const fetcher = url => fetch(url).then(r => r.json());
+import CreateBander from "./new_bander";
 
-const createDate = pre_date => {
+const fetcher = (url) => fetch(url).then((r) => r.json());
+
+const createDate = (pre_date) => {
   const date = new Date(pre_date);
-  console.log(date);
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
 
 const poster = async (url, param) => {
-  console.log(param);
   const data = await fetch(url, {
     method: "post",
-    body: JSON.stringify({ id: param })
-  }).then(r => r.json());
+    body: JSON.stringify({ id: param }),
+  }).then((r) => r.json());
   return data;
 };
 
@@ -56,66 +56,66 @@ const banderColumns = [
     Header: "Nationality",
     accessor: "nationality",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Passerines",
-    accessor: "max_passerine",
+    accessor: "max_passerines",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Raptors",
     accessor: "max_raptor",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Hummingbird",
-    accessor: "max_hummingbird",
+    accessor: "max_hummingbirds",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Waterfowl",
     accessor: "max_waterfowl",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Shorebird",
-    accessor: "max_shorebird",
+    accessor: "max_shorebirds",
     filter: "hasAny",
-    Filter: SelectColumnFilter
+    Filter: SelectColumnFilter,
   },
   {
     Header: "Race",
     accessor: "race",
     filter: "hasAny",
     Filter: SelectColumnFilter,
-    show: false
+    show: false,
   },
   {
     Header: "Gender",
     accessor: "gender",
     filter: "hasAny",
     Filter: SelectColumnFilter,
-    show: false
+    show: false,
   },
   { Header: "Remarks", accessor: "remarks", disableFilters: true, show: false },
   { Header: "Email", accessor: "email", disableFilters: true, show: false },
-  { Header: "Address", accessor: "address", disableFilters: true, show: false }
+  { Header: "Address", accessor: "address", disableFilters: true, show: false },
 ];
 
 export default function Banders(props) {
-  const { mutate } = useSWRConfig();
-  const { error, data } = useSWR("/api/banders", fetcher);
+  const { error, data, mutate } = useSWR("/api/banders", fetcher);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState();
+  const [tableData, setTableData] = useState();
   const columns = useMemo(() => banderColumns, []);
   // const bander = useSWR(["/api/bander_id",id], poster);
 
-  const openFun = id => {
+  const openFun = (id) => {
     setId(id);
     onOpen();
   };
@@ -123,26 +123,46 @@ export default function Banders(props) {
   return (
     <Box p="24" mt="8">
       <Heading>Banders</Heading>
-      {data
-        ? <Taable columns={columns} data={data} clickFunction={openFun} />
-        : "loading"}
-      <BModal isOpen={isOpen} onClose={onClose} id={id} />
+      {data ? (
+        <Taable columns={columns} data={data} clickFunction={openFun} />
+      ) : (
+        "loading"
+      )}
+      <BModal
+        setId={setId}
+        mutate={mutate}
+        isOpen={isOpen}
+        onClose={onClose}
+        id={id}
+      />
+      <Button onClick={() => mutate()}>Mutate</Button>
     </Box>
   );
 }
 
-function BModal({ isOpen, onClose, id }) {
+function BModal({ mutate, setId, isOpen, onClose, id }) {
   const idData = { id: id };
+  const [editMode, setEditMode] = useState(false);
   const { error, data } = useSWR(["/api/bander_id", id], poster);
-  console.log(data);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      size="3xl"
+      onClose={() => {
+        onClose(), setEditMode(false), setId(null), mutate();
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
-        {data
-          ? <div>
+        {data ? (
+          !editMode ? (
+            <div>
               <ModalHeader>
-                {data.first_name + " " + data.last_name}
+                <Flex justify="space-between" align="center">
+                  {data.first_name + " " + data.last_name}{" "}
+                  <Button onClick={() => setEditMode(true)}>Edit</Button>
+                </Flex>
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody>
@@ -156,28 +176,37 @@ function BModal({ isOpen, onClose, id }) {
                   <strong> Gender:</strong> {data.gender}
                 </p>
 
+                <p>
+                  <strong> Nationality:</strong> {data.nationality}
+                </p>
+
                 <Box mt="8" mb="8">
                   <Heading size="md"> Maximum level </Heading>
                   <Flex wrap="wrap" align="start">
                     <Box p="1">
-                      {" "}<Heading size="xs">Passerine </Heading>{" "}
-                      <p>{data.max_passerine || "None"}</p>
+                      {" "}
+                      <Heading size="xs">Passerine </Heading>{" "}
+                      <p>{data.max_passerines || "None"}</p>
                     </Box>
                     <Box p="1">
-                      {" "}<Heading size="xs">Hummingbird </Heading>{" "}
+                      {" "}
+                      <Heading size="xs">Hummingbird </Heading>{" "}
                       <p>{data.max_humminbird || "None"}</p>
                     </Box>
                     <Box p="1">
-                      {" "}<Heading size="xs">Raptor</Heading>{" "}
+                      {" "}
+                      <Heading size="xs">Raptor</Heading>{" "}
                       <p> {data.max_raptor || "None"}</p>
                     </Box>
                     <Box p="1">
-                      {" "}<Heading size="xs">Waterfowl </Heading>{" "}
+                      {" "}
+                      <Heading size="xs">Waterfowl </Heading>{" "}
                       <p>{data.max_waterfowl || "None"}</p>
                     </Box>
                     <Box p="1">
-                      {" "}<Heading size="xs">Shorebird </Heading>{" "}
-                      <p>{data.max_shorebird || "None"}</p>
+                      {" "}
+                      <Heading size="xs">Shorebird </Heading>{" "}
+                      <p>{data.max_shorebirds || "None"}</p>
                     </Box>
                   </Flex>
                 </Box>
@@ -195,16 +224,28 @@ function BModal({ isOpen, onClose, id }) {
                     <AccordionPanel>
                       {data.evaluations_participated.map((evaluation, i) => {
                         return (
-                          <Box p="3" bg={i%2==0?"lightgray":""} key={i}>
+                          <Box p="3" bg={i % 2 == 0 ? "lightgray" : ""} key={i}>
                             <List>
-                              <ListItem><strong>Taxa:</strong> {evaluation.taxa}</ListItem>
-                              <ListItem><strong>Level:</strong> {evaluation.level}</ListItem>
-                              <ListItem><strong>Written Exam Score:</strong> {evaluation.written_score}</ListItem>
+                              <ListItem>
+                                <strong>Taxa:</strong> {evaluation.taxa}
+                              </ListItem>
+                              <ListItem>
+                                <strong>Level:</strong> {evaluation.level}
+                              </ListItem>
+                              <ListItem>
+                                <strong>Written Exam Score:</strong>{" "}
+                                {evaluation.written_score}
+                              </ListItem>
 
-                              <ListItem><strong>Result:</strong> {evaluation.final_result}</ListItem>
+                              <ListItem>
+                                <strong>Result:</strong>{" "}
+                                {evaluation.final_result}
+                              </ListItem>
 
-                              <ListItem><strong>Notes:</strong> {evaluation.comments || "None"}</ListItem>
-
+                              <ListItem>
+                                <strong>Notes:</strong>{" "}
+                                {evaluation.comments || "None"}
+                              </ListItem>
                             </List>
                           </Box>
                         );
@@ -223,25 +264,19 @@ function BModal({ isOpen, onClose, id }) {
                     </AccordionButton>
                     <AccordionPanel>
                       <Table>
-                        {data.sessions_evaluated.map((evalu, i) =>
+                        {data.sessions_evaluated.map((evalu, i) => (
                           <Tr mb="2" p="1" key={i}>
                             <Td p="1">
                               {evalu.evaluation.bander.first_name +
                                 " " +
                                 evalu.evaluation.bander.last_name}
                             </Td>
-                            <Td p="1">
-                              {evalu.evaluation.taxa}
-                            </Td>
+                            <Td p="1">{evalu.evaluation.taxa}</Td>
 
-                            <Td p="1">
-                              {evalu.evaluation.level}
-                            </Td>
-                            <Td p="1">
-                              {evalu.evaluation.final_result}
-                            </Td>
+                            <Td p="1">{evalu.evaluation.level}</Td>
+                            <Td p="1">{evalu.evaluation.final_result}</Td>
                           </Tr>
-                        )}
+                        ))}
                       </Table>
                     </AccordionPanel>
                   </AccordionItem>
@@ -256,16 +291,12 @@ function BModal({ isOpen, onClose, id }) {
                     </AccordionButton>
                     <AccordionPanel>
                       <Table>
-                        {data.session_chaired.map((sess, i) =>
+                        {data.session_chaired.map((sess, i) => (
                           <Tr mb="2" p="1" key={i}>
-                            <Td p="1">
-                              {sess.organization}
-                            </Td>
-                            <Td p="1">
-                              {createDate(sess.date)}
-                            </Td>
+                            <Td p="1">{sess.organization}</Td>
+                            <Td p="1">{createDate(sess.date)}</Td>
                           </Tr>
-                        )}
+                        ))}
                       </Table>
                     </AccordionPanel>
                   </AccordionItem>
@@ -273,9 +304,20 @@ function BModal({ isOpen, onClose, id }) {
                 {/* <Lorem count={2} /> */}
               </ModalBody>
             </div>
-          : "loading"}
+          ) : (
+            <CreateBander modal pre_data={data}></CreateBander>
+          )
+        ) : (
+          "loading"
+        )}
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={() => {
+              onClose(), setEditMode(false), setId(null), mutate();
+            }}
+          >
             Close
           </Button>
         </ModalFooter>
@@ -283,5 +325,3 @@ function BModal({ isOpen, onClose, id }) {
     </Modal>
   );
 }
-
-+1 - 352 - 215 - 5935;

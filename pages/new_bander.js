@@ -7,30 +7,40 @@ import {
   Select,
   Input,
   Button,
-  Container
+  Container,
 } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 
 export default function CreateBander(props) {
+  const { pre_data, modal } = props;
+  const def_data = { ...pre_data };
+  delete def_data.session_chaired;
+  delete def_data.evaluations_participated;
+  delete def_data.sessions_evaluated;
+
   const {
     register,
     watch,
     handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm();
+    formState: { errors, isSubmitting },
+  } = useForm({ defaultValues: def_data });
 
-   function onSubmit(values) {
-     console.log(values)
-     return new Promise(async resolve => {
-    await fetch("/api/create_bander",{method: "post",body:JSON.stringify(({data:values}))})
-  resolve()   
-  })
+  function onSubmit(values) {
+    return new Promise(async (resolve) => {
+      await fetch("/api/create_bander", {
+        method: "post",
+        body: JSON.stringify({ id: pre_data.id, data: values }),
+      });
+      resolve();
+    });
   }
 
   return (
-    <Box mx={64}>
+    <Box mx={modal ? 12 : 64}>
       <Container>
-        <Heading mb={16}>Add new bander</Heading>
+        <Heading size="lg" mt={16} mb={8}>
+          Create New Bander
+        </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Flex>
@@ -43,7 +53,7 @@ export default function CreateBander(props) {
               <FormLabel mb={0}>First Name</FormLabel>
               <Input
                 {...register("first_name", {
-                  required: "Required"
+                  required: "Required",
                 })}
                 placeholder="David"
               ></Input>
@@ -55,7 +65,7 @@ export default function CreateBander(props) {
               <FormLabel mb={0}>Last Name</FormLabel>
               <Input
                 {...register("last_name", {
-                  required: "Required"
+                  required: "Required",
                 })}
                 placeholder="Attenborough"
               ></Input>
@@ -71,8 +81,8 @@ export default function CreateBander(props) {
                 required: "Required",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Not a valid email"
-                }
+                  message: "Not a valid email",
+                },
               })}
               placeholder="david@nabanding.org"
             ></Input>
@@ -80,9 +90,12 @@ export default function CreateBander(props) {
               {errors.email && errors.email.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl  mb={6} isRequired isInvalid={errors.nationality}>
+          <FormControl mb={6} isRequired isInvalid={errors.nationality}>
             <FormLabel mb={0}>Nationality</FormLabel>
-            <Select placeholder={"Select one"} {...register("nationality", { required: "Required" })}>
+            <Select
+              placeholder={"Select one"}
+              {...register("nationality", { required: "Required" })}
+            >
               {countryList.map((cnt, i) => (
                 <option key={i} value={cnt}>
                   {cnt}
@@ -117,7 +130,64 @@ export default function CreateBander(props) {
               {errors.race && errors.race.message}
             </FormErrorMessage>
           </FormControl>
+          <FormControl mb={6} isInvalid={errors.max_passerines}>
+            <FormLabel mb={0}>Maximum Passerines Level</FormLabel>
+            <Select {...register("max_passerines", {})} placeholder="None">
+              {level.map((tx, i) => (
+                <option key={i} value={tx}>
+                  {tx}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.max_passerines && errors.max_passerines.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl mb={6} isInvalid={errors.max_hummingbirds}>
+            <FormLabel mb={0}>Maximum Hummingbirds Level</FormLabel>
+            <Select {...register("max_hummingbirds", {})} placeholder="None">
+              {level.map((tx, i) => (
+                <option key={i} value={tx}>
+                  {tx}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.max_hummingbirds && errors.max_hummingbirds.message}
+            </FormErrorMessage>
+          </FormControl>
+
+
+          <FormControl mb={6} isInvalid={errors.max_shorebirds}>
+            <FormLabel mb={0}>Maximum Shorebirds Level</FormLabel>
+            <Select {...register("max_shorebirds", {})} placeholder="None">
+              {level.map((tx, i) => (
+                <option key={i} value={tx}>
+                  {tx}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.max_shorebirds && errors.max_shorebirds.message}
+            </FormErrorMessage>
+          </FormControl>
+
+
+          <FormControl mb={6} isInvalid={errors.max_waterfowl}>
+            <FormLabel mb={0}>Maximum Waterfowl Level</FormLabel>
+            <Select {...register("max_waterfowl", {})} placeholder="None">
+              {level.map((tx, i) => (
+                <option key={i} value={tx}>
+                  {tx}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.max_waterfowl && errors.max_waterfowl.message}
+            </FormErrorMessage>
+          </FormControl>
           <Button
+            width="100%"
             mt={4}
             colorScheme="teal"
             loadingText="Sending"
@@ -381,5 +451,7 @@ const countryList = [
   "Yemen",
   "Zambia",
   "Zimbabwe",
-  "Åland Islands"
+  "Åland Islands",
 ];
+
+const level = ["None","Assistant", "Bander", "Trainer"];

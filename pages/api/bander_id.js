@@ -3,7 +3,6 @@ const prisma = new PrismaClient();
 
 export default async function getBanders(req, res) {
   const id =   (JSON.parse(req.body)).id;
-  console.log(   (JSON.parse(req.body)).id)
   const bander = await prisma.bander.findFirst({
     where: { id },
     include: {
@@ -12,6 +11,5 @@ export default async function getBanders(req, res) {
       sessions_evaluated: {include:{evaluation:{include:{bander:true}}}}
     }
   });
-  console.log(bander)
   res.json(bander);
 }

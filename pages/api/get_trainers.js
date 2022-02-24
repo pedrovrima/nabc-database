@@ -9,11 +9,11 @@ const createWhere = (taxa) => {
   } else {
     where = {
       OR: [
-        {max_raptor: "Trainer"},
-        {max_passerine: "Trainer"},
-        {max_humminbird: "Trainer"},
+        {max_raptors: "Trainer"},
+        {max_passerines: "Trainer"},
+        {max_hummingbirds: "Trainer"},
         {max_waterfowl: "Trainer"},
-        {max_shorebird: "Trainer"},
+        {max_shorebirds: "Trainer"},
       ]
     };
     return where;
@@ -22,8 +22,6 @@ const createWhere = (taxa) => {
 
 export default async function getTrainers(req, res) {
   const where = createWhere();
-    console.log(where)
   const trainers = await prisma.bander.findMany({ where:where });
-  console.log(trainers)
   res.json(trainers);
 }

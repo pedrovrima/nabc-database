@@ -22,6 +22,12 @@ export default function Home(props) {
       <Link passHref href="/sessions">
         <Button mb="4"> Evaluation Sessions</Button>
       </Link>
+      <Link passHref href="/new_bander">
+        <Button mb="4"> Add Bander</Button>
+      </Link>
+      <Link passHref href="/new_session">
+        <Button mb="4"> Add Evaluation Sessions</Button>
+      </Link>
     </Box>
   );
 }

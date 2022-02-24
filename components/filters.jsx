@@ -50,7 +50,6 @@ export function SelectColumnFilter({
 
   const [selected, setSelected] = useState(filterValue||[]);
 
-  console.log(selected,filterValue)
   const changeFunc = e => {
     selected.indexOf(e.target.value) > -1
       ? setSelected(selected.filter(sel => sel !== e.target.value))

@@ -3,6 +3,8 @@ import { useTable, useGlobalFilter, useFilters } from "react-table";
 
 import { DefaultColumnFilter, GlobalFilter } from "./filters";
 
+
+
 import {
   Accordion,
   AccordionItem,
@@ -63,7 +65,6 @@ const Taable = ({ columns, data, clickFunction }) => {
     []
   );
 
-  const new_data = useMemo(() => data, []);
   const {
     getTableProps,
     getTableBodyProps,
@@ -78,7 +79,7 @@ const Taable = ({ columns, data, clickFunction }) => {
   } = useTable(
     {
       columns,
-      data: new_data,
+      data: data,
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
       initialState: {
@@ -148,7 +149,7 @@ const Taable = ({ columns, data, clickFunction }) => {
       <Box />
 
 <Box>
-  <p>Total Rercords: {preGlobalFilteredRows.length}</p>
+  <p>Total Records: {preGlobalFilteredRows.length}</p>
 </Box>
       
       <Table className="" {...getTableProps()}>
@@ -167,7 +168,6 @@ const Taable = ({ columns, data, clickFunction }) => {
         <Tbody {...getTableBodyProps()}>
           {rows.map((row, i) => {
             prepareRow(row);
-            console.log(row);
             return (
               <Tr key={i} {...row.getRowProps()}>
                 {row.cells.map(cell => {
