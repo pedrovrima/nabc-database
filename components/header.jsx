@@ -46,10 +46,10 @@ export default function Header(props) {
         <Link passHref href="/sessions">
           <Linku fontSize="lg" mr="4">Sessions</Linku>
         </Link>
-        <Link passHref href="/new_banders">
+        <Link passHref href="/new_bander">
           <Linku fontSize="lg" mr="4">Add bander</Linku>
         </Link>
-        <Link passHref href="/new_sessions">
+        <Link passHref href="/new_session">
           <Linku fontSize="lg" mr="4">Add session</Linku>
         </Link>
         <Link passHref href="/open_sessions">
