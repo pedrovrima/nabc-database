@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Box, Heading } from "@chakra-ui/layout";
+import { Flex, Box,Heading } from "@chakra-ui/layout";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,20 +14,29 @@ import styles from "../styles/Home.module.css";
 
 export default function Home(props) {
   return (
-    <Box className={styles.container}>
-      <Heading mb="12" size="lg"> NABC Database </Heading>
+    <Flex align="center" justify="center" className={styles.container}>
+      <Image src="/cropped-NABC_logo-removebg.png" width="240" height="223" />
+      <Heading mt="8" mb="12" align="center" w={"100%"} size="2xl"> NABC Database </Heading>
+
+    <Box width="25%">
+
       <Link passHref  href="/banders">
-        <Button mb="4" >Banders</Button>
+        <Button mb="2" colorScheme="blue" w={"100%"} >Banders</Button>
       </Link>
       <Link passHref href="/sessions">
-        <Button mb="4"> Evaluation Sessions</Button>
+        <Button colorScheme="blue" w={"100%"} mb="2"> Evaluations sessions</Button>
       </Link>
       <Link passHref href="/new_bander">
-        <Button mb="4"> Add Bander</Button>
+        <Button colorScheme="blue" w={"100%"} mb="2"> Add Bander</Button>
       </Link>
       <Link passHref href="/new_session">
-        <Button mb="4"> Add Evaluation Sessions</Button>
+        <Button colorScheme="blue" w={"100%"} mb="2"> Add Evaluation Sessions</Button>
       </Link>
-    </Box>
+      <Link passHref href="/open_session">
+        <Button colorScheme="blue" w={"100%"} mb="2"> Finalize session</Button>
+      </Link>
+      </Box>
+
+    </Flex>
   );
 }

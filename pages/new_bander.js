@@ -29,7 +29,7 @@ export default function CreateBander(props) {
     return new Promise(async (resolve) => {
       await fetch("/api/create_bander", {
         method: "post",
-        body: JSON.stringify({ id: pre_data.id, data: values }),
+        body: JSON.stringify({ id: pre_data?.id, data: values }),
       });
       resolve();
     });
@@ -132,7 +132,7 @@ export default function CreateBander(props) {
           </FormControl>
           <FormControl mb={6} isInvalid={errors.max_passerines}>
             <FormLabel mb={0}>Maximum Passerines Level</FormLabel>
-            <Select {...register("max_passerines", {})} placeholder="None">
+            <Select {...register("max_passerines", {})} defaultValue="None">
               {level.map((tx, i) => (
                 <option key={i} value={tx}>
                   {tx}
@@ -145,7 +145,7 @@ export default function CreateBander(props) {
           </FormControl>
           <FormControl mb={6} isInvalid={errors.max_hummingbirds}>
             <FormLabel mb={0}>Maximum Hummingbirds Level</FormLabel>
-            <Select {...register("max_hummingbirds", {})} placeholder="None">
+            <Select {...register("max_hummingbirds", {})} defaultValue="None">
               {level.map((tx, i) => (
                 <option key={i} value={tx}>
                   {tx}
@@ -160,7 +160,7 @@ export default function CreateBander(props) {
 
           <FormControl mb={6} isInvalid={errors.max_shorebirds}>
             <FormLabel mb={0}>Maximum Shorebirds Level</FormLabel>
-            <Select {...register("max_shorebirds", {})} placeholder="None">
+            <Select {...register("max_shorebirds", {})} defaultValue="None">
               {level.map((tx, i) => (
                 <option key={i} value={tx}>
                   {tx}
@@ -172,10 +172,24 @@ export default function CreateBander(props) {
             </FormErrorMessage>
           </FormControl>
 
+          <FormControl mb={6} isInvalid={errors.max_raptors}>
+            <FormLabel mb={0}>Maximum Raptors Level</FormLabel>
+            <Select {...register("max_raptors", {})} defaultValue="None">
+              {level.map((tx, i) => (
+                <option key={i} value={tx}>
+                  {tx}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.max_raptors && errors.max_raptors.message}
+            </FormErrorMessage>
+          </FormControl>
+
 
           <FormControl mb={6} isInvalid={errors.max_waterfowl}>
             <FormLabel mb={0}>Maximum Waterfowl Level</FormLabel>
-            <Select {...register("max_waterfowl", {})} placeholder="None">
+            <Select {...register("max_waterfowl", {})} defaultValue="None">
               {level.map((tx, i) => (
                 <option key={i} value={tx}>
                   {tx}

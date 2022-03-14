@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import Taable from "../components/table";
+import Header from "../components/header";
+
 import { SelectColumnFilter } from "../components/filters";
 import {
   Container,
@@ -11,6 +13,7 @@ import {
   ListItem,
 } from "@chakra-ui/layout";
 import {
+  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -121,12 +124,23 @@ export default function Banders(props) {
   };
 
   return (
-    <Box p="24" mt="8">
+
+<>    <Header />
+
+<Box p="24" mt="8">
       <Heading>Banders</Heading>
       {data ? (
         <Taable columns={columns} data={data} clickFunction={openFun} />
       ) : (
-        "loading"
+        <Flex justify="center">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />{" "}
+        </Flex>
       )}
       <BModal
         setId={setId}
@@ -135,8 +149,8 @@ export default function Banders(props) {
         onClose={onClose}
         id={id}
       />
-      <Button onClick={() => mutate()}>Mutate</Button>
     </Box>
+    </>
   );
 }
 
@@ -161,7 +175,6 @@ function BModal({ mutate, setId, isOpen, onClose, id }) {
               <ModalHeader>
                 <Flex justify="space-between" align="center">
                   {data.first_name + " " + data.last_name}{" "}
-                  <Button onClick={() => setEditMode(true)}>Edit</Button>
                 </Flex>
               </ModalHeader>
               <ModalCloseButton />
@@ -308,9 +321,21 @@ function BModal({ mutate, setId, isOpen, onClose, id }) {
             <CreateBander modal pre_data={data}></CreateBander>
           )
         ) : (
-          "loading"
+          <Flex W="100%" mt={8} justify="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />{" "}
+          </Flex>
         )}
         <ModalFooter>
+          <Button mr={4} onClick={() => setEditMode(!editMode)}>
+            Edit
+          </Button>
+
           <Button
             colorScheme="blue"
             mr={3}

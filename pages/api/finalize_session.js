@@ -29,7 +29,7 @@ const updateBanders = (data) => {
     const banderLevel = datum.bander[createTaxa(datum.taxa)];
     const oldLevel = ct.filter(cts=>cts.where?.id === datum.bander.id)[0]?.data[createTaxa(datum.taxa)]
 
-    console.log(banderLevel,oldLevel,condition);
+    console.log(banderLevel,oldLevel,condition, datum,datum.result);
     if (condition(banderLevel) && condition(oldLevel)) {
       return [
         ...ct,
@@ -37,7 +37,7 @@ const updateBanders = (data) => {
           where: { id: datum.bander.id },
           data: {
             [createTaxa(datum.taxa)]:
-              datum.result === "Assistant" ? "Assistant" : datum.level,
+              datum.final_result === "Assistant" ? "Assistant" : datum.level,
           },
         },
       ];

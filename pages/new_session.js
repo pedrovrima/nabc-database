@@ -30,6 +30,8 @@ export default function CreateSession(props) {
   } = useForm({ defaultValues: def_data });
 
   const { data } = useSWR("/api/get_trainers", fetcher);
+  const { data:bander_data } = useSWR("/api/banders", fetcher);
+
   function onSubmit(values) {
     return new Promise(async (resolve) => {
       if (pre_data) {
@@ -202,7 +204,7 @@ export default function CreateSession(props) {
 
   return (
     <>
-      {data ? (
+      {data && bander_data ? (
         <Box mx={modal ? 12 : 64} mb={64}>
           <Container>
             <Heading size="lg" mt={16} mb={8}>
@@ -305,7 +307,7 @@ export default function CreateSession(props) {
                 control={control}
                 register={register}
                 trainers={data}
-                banders={data}
+                banders={bander_data}
               ></EvaluationForm>
               <Flex>
                 <Button

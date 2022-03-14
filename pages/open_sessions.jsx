@@ -16,6 +16,7 @@ import {
   ListItem,
 } from "@chakra-ui/layout";
 import {
+  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -99,8 +100,13 @@ export default function Sessions(props) {
       {data ? (
         <Taable columns={columns} data={data} clickFunction={openFun} />
       ) : (
-        "loading"
-      )}
+<Spinner
+  thickness='4px'
+  speed='0.65s'
+  emptyColor='gray.200'
+  color='blue.500'
+  size='xl'
+/>      )}
       <BModal isOpen={isOpen} onClose={onClose} id={id} />
     </Box>
   );

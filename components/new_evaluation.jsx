@@ -255,7 +255,7 @@ const traps = ["Mistnet","Trap"]
 
 
 const taxa = [
-  "Passerine",
+  "Passerines",
   "Shorebirds",
   "Waterfowl",
   "Hummingbirds",

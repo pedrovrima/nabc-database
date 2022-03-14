@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import Taable from "../components/table";
+import Header from "../components/header";
 import NewSession from "./new_session";
 import { SelectColumnFilter } from "../components/filters";
 import {
@@ -14,6 +15,7 @@ import {
   ListItem,
 } from "@chakra-ui/layout";
 import {
+  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -84,16 +86,25 @@ export default function Sessions(props) {
     onOpen();
   };
 
-  return (
+  return (<>
+  <Header />
     <Box p="24" mt="8">
       <Heading>Sessions</Heading>
       {data ? (
         <Taable columns={columns} data={data} clickFunction={openFun} />
       ) : (
-        "loading"
+        <Flex  justify="center">
+        <Spinner
+          thickness='4px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='blue.500'
+          size='xl'
+        />       </Flex>      
       )}
       <BModal isOpen={isOpen} onClose={onClose} id={id} />
     </Box>
+    </>
   );
 }
 
@@ -119,7 +130,7 @@ function BModal({ isOpen, onClose, id }) {
   }, [data]);
 
   return (
-    <Modal size={"lg"} isOpen={isOpen} onClose={onClose}>
+    <Modal size={"3xl"} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         {data ? (
@@ -128,7 +139,6 @@ function BModal({ isOpen, onClose, id }) {
               <ModalHeader>
                 <Flex justify="space-between" align="center">
                   {data.organization + " " + createDate(data.date)}
-                  <Button onClick={() => setEditMode(true)}>Edit</Button>
                 </Flex>
               </ModalHeader>
               <ModalCloseButton />
@@ -184,9 +194,19 @@ function BModal({ isOpen, onClose, id }) {
             </>
           )
         ) : (
-          "loading"
+          <Flex W="100%" mt={8} justify="center">
+          <Spinner
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl'
+          />       </Flex>
         )}
         <ModalFooter>
+
+        <Button mr="4" onClick={() => setEditMode(true)}>Edit</Button>
+
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
