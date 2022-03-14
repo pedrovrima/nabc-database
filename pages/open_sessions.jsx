@@ -3,7 +3,7 @@ import useSWR, { useSWRConfig } from "swr";
 import Taable from "../components/table";
 import NewSession from "./new_session";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-
+import Header from "../components/header";
 import { SelectColumnFilter } from "../components/filters";
 import {
   Container,
@@ -94,7 +94,8 @@ export default function Sessions(props) {
     onOpen();
   };
 
-  return (
+  return (<>
+  <Header></Header>
     <Box p="24" mt="8">
       <Heading>Sessions</Heading>
       {data ? (
@@ -109,6 +110,7 @@ export default function Sessions(props) {
 />      )}
       <BModal isOpen={isOpen} onClose={onClose} id={id} />
     </Box>
+    </>
   );
 }
 

@@ -9,6 +9,7 @@ import {
   Button,
   Container,
 } from "@chakra-ui/react";
+import Header from "../components/header";
 import { useForm, Controller } from "react-hook-form";
 
 export default function CreateBander(props) {
@@ -36,6 +37,9 @@ export default function CreateBander(props) {
   }
 
   return (
+<>
+    {(!modal?<Header/>:<></>)}
+
     <Box mx={modal ? 12 : 64}>
       <Container>
         <Heading size="lg" mt={16} mb={8}>
@@ -213,6 +217,7 @@ export default function CreateBander(props) {
         </form>
       </Container>
     </Box>
+    </>
   );
 }
 

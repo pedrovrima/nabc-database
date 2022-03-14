@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import useSWR from "swr";
+import Header from "../components/header";
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
 export default function CreateSession(props) {
@@ -204,7 +205,10 @@ export default function CreateSession(props) {
 
   return (
     <>
+
       {data && bander_data ? (
+        <>
+       {(!modal?<Header/>:<></>)}
         <Box mx={modal ? 12 : 64} mb={64}>
           <Container>
             <Heading size="lg" mt={16} mb={8}>
@@ -324,6 +328,7 @@ export default function CreateSession(props) {
             </form>
           </Container>
         </Box>
+        </>
       ) : (
         ""
       )}

@@ -32,7 +32,7 @@ export default function Home(props) {
       <Link passHref href="/new_session">
         <Button colorScheme="blue" w={"100%"} mb="2"> Add Evaluation Sessions</Button>
       </Link>
-      <Link passHref href="/open_session">
+      <Link passHref href="/open_sessions">
         <Button colorScheme="blue" w={"100%"} mb="2"> Finalize session</Button>
       </Link>
       </Box>
