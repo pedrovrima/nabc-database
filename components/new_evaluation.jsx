@@ -96,13 +96,13 @@ export default function EvaluationForm(props) {
               <FormErrorMessage></FormErrorMessage>
             </FormControl>
 
-
+{/* 
             <FormLabel size="sm">Trapping Methods</FormLabel>
             <Traps
               control={control}
               evalIndex={index}
               register={register}
-            ></Traps>
+            ></Traps> */}
 
             <FormLabel size="sm">Evaluators</FormLabel>
             <Trainers

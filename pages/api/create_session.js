@@ -46,7 +46,7 @@ try{
       });
     }
 
-    if (data.trap.delete.length > 0) {
+    if (data.trap?.delete.length > 0) {
       const deletions = data.trap.delete.map((del) =>
         prisma.evaluationTraps.delete({
           where: { ...del },
@@ -56,7 +56,7 @@ try{
       await prisma.$transaction(deletions);
     }
 
-    if (data.trap.create.length > 0) {
+    if (data.trap?.create.length > 0) {
       await prisma.evaluationTraps.createMany({
         data: data.trap.create,
       });
@@ -80,3 +80,4 @@ try{
     res.json(500)
   }
 }
+
