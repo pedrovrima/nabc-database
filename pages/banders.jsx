@@ -50,6 +50,14 @@ const poster = async (url, param) => {
   return data;
 };
 
+const createEvaluators = (evalu) =>
+  evalu.evaluators?.reduce(
+    (cont, evaluator, i ) =>
+      `${i==0?"":cont+", "} ${
+        evaluator.bander.first_name + " " + evaluator.bander.last_name
+      }`
+  ,"");
+
 const banderColumns = [
   { Header: "Id", accessor: "id", disableFilters: true, show: false },
 
@@ -124,32 +132,32 @@ export default function Banders(props) {
   };
 
   return (
-
-<>    <Header />
-
-<Box p="24" mt="8">
-      <Heading>Banders</Heading>
-      {data ? (
-        <Taable columns={columns} data={data} clickFunction={openFun} />
-      ) : (
-        <Flex justify="center">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />{" "}
-        </Flex>
-      )}
-      <BModal
-        setId={setId}
-        mutate={mutate}
-        isOpen={isOpen}
-        onClose={onClose}
-        id={id}
-      />
-    </Box>
+    <>
+      {" "}
+      <Header />
+      <Box p="24" mt="8">
+        <Heading>Banders</Heading>
+        {data ? (
+          <Taable columns={columns} data={data} clickFunction={openFun} />
+        ) : (
+          <Flex justify="center">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />{" "}
+          </Flex>
+        )}
+        <BModal
+          setId={setId}
+          mutate={mutate}
+          isOpen={isOpen}
+          onClose={onClose}
+          id={id}
+        />
+      </Box>
     </>
   );
 }
@@ -240,11 +248,25 @@ function BModal({ mutate, setId, isOpen, onClose, id }) {
                           <Box p="3" bg={i % 2 == 0 ? "lightgray" : ""} key={i}>
                             <List>
                               <ListItem>
+                                <strong>Place:</strong>{" "}
+                                {evaluation.session.organization}
+                              </ListItem>
+                              <ListItem>
+                                <strong>Date:</strong>{" "}
+                                {createDate(evaluation.session.date)}
+                              </ListItem>
+
+                              <ListItem>
                                 <strong>Taxa:</strong> {evaluation.taxa}
                               </ListItem>
                               <ListItem>
                                 <strong>Level:</strong> {evaluation.level}
                               </ListItem>
+                              <ListItem>
+                                <strong>Evaluators:</strong>{" "}
+                                {createEvaluators(evaluation)}
+                              </ListItem>
+
                               <ListItem>
                                 <strong>Written Exam Score:</strong>{" "}
                                 {evaluation.written_score}
@@ -283,6 +305,12 @@ function BModal({ mutate, setId, isOpen, onClose, id }) {
                               {evalu.evaluation.bander.first_name +
                                 " " +
                                 evalu.evaluation.bander.last_name}
+                            </Td>
+                            <Td p="1">
+                              {evalu.evaluation.session.organization}
+                            </Td>
+                            <Td p="1">
+                              {createDate(evalu.evaluation.session.date)}
                             </Td>
                             <Td p="1">{evalu.evaluation.taxa}</Td>
 

@@ -13,7 +13,7 @@ const createCondition = (result, level) => {
     return (current_level) =>
       current_level ? !["Trainer"].includes(current_level) : true;
   }
-  if (result === "Assistant" || (result === "Approved" && level === "Assistant")) {
+  if (result.includes("Assistant") || (result === "Approved" && level.includes("Assistant"))) {
     return (current_level) =>
       current_level ? !["Trainer", "Bander"].includes(current_level) : true;
   }
@@ -37,7 +37,7 @@ const updateBanders = (data) => {
           where: { id: datum.bander.id },
           data: {
             [createTaxa(datum.taxa)]:
-              datum.final_result === "Assistant" ? "Assistant" : datum.level,
+              datum.final_result.includes("Assistant") ? datum.final_result : datum.level,
           },
         },
       ];

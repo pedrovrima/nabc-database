@@ -25,11 +25,11 @@ model Bander {
   session_chaired          Session[]
   evaluations_participated Evaluation[]
   sessions_evaluated       Evaluator[]
-  max_raptors               Levels?
-  max_passerines            Levels?
-  max_hummingbirds           Levels?
+  max_raptors              Levels?
+  max_passerines           Levels?
+  max_hummingbirds         Levels?
   max_waterfowl            Levels?
-  max_shorebirds            Levels?
+  max_shorebirds           Levels?
 }
 
 model Session {
@@ -56,18 +56,18 @@ model Evaluator {
 }
 
 model Evaluation {
-  id            Int         @id @default(autoincrement())
-  bander        Bander      @relation(fields: [banderId], references: [id])
-  banderId      Int
-  level         Levels
-  taxa          Taxa
-  session       Session     @relation(fields: [sessionId], references: [id])
-  sessionId     Int
-  evaluators    Evaluator[]
-  final_result  Result?
-  written_score Float?
-  notes      String?
-  paid          Boolean?
+  id               Int               @id @default(autoincrement())
+  bander           Bander            @relation(fields: [banderId], references: [id])
+  banderId         Int
+  level            Levels
+  taxa             Taxa
+  session          Session           @relation(fields: [sessionId], references: [id])
+  sessionId        Int
+  evaluators       Evaluator[]
+  final_result     Result?
+  written_score    Float?
+  notes            String?
+  paid             Boolean?
   trapping_methods EvaluationTraps[]
 }
 
@@ -97,11 +97,16 @@ enum Levels {
   Assistant
   Bander
   Trainer
+  AssistantExtraction
+  AssistantProcessing
 }
 
 enum Result {
   Approved
   Rejected
   Assistant
+  AssistantExtraction
+  AssistantProcessing
+
   TBD
 }

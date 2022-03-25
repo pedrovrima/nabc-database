@@ -7,8 +7,8 @@ export default async function getBanders(req, res) {
     where: { id },
     include: {
       session_chaired: true,
-      evaluations_participated: true,
-      sessions_evaluated: {include:{evaluation:{include:{bander:true}}}}
+      evaluations_participated: {include:{evaluators:{include:{bander:true}},session:true}},
+      sessions_evaluated: {include:{evaluation:{include:{session:true,bander:true}}}}
     }
   });
   res.json(bander);
